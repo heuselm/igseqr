@@ -2,7 +2,7 @@
 #' @description summarize MiXCR IgSeq results as structured by https://github.com/heuselm/igseq_workflow.git
 #' @param result_folder Location of the IgSeq-workflow result folder.
 #' @param write_tables Switch whether the collected summary information should be output as .csv tables
-#' @value IGSeq result object (list) with tables
+#' @return IGSeq result object (list) with tables
 #' * step1_checkout_log
 #' * step2_histogram_log
 #' * step2_histogram_osq
@@ -10,7 +10,7 @@
 #' * step4_align_log
 #' * step5_cloneAssembly_log"
 #' * step5_finalclones
-#' @import data.table ggplot2 ggrepel
+#' @import data.table
 #' @export
 
 importIgSeq <- function(result_folder = ".", write_tables = TRUE, summarize_in_pdfs = TRUE){

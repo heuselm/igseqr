@@ -11,6 +11,16 @@ importIgSeq(result_folder = ".", write_tables = TRUE, summarize_in_pdfs = TRUE)
 
 \item{write_tables}{Switch whether the collected summary information should be output as .csv tables}
 }
+\value{
+IGSeq result object (list) with tables
+* step1_checkout_log
+* step2_histogram_log
+* step2_histogram_osq
+* step3_assemble_log
+* step4_align_log
+* step5_cloneAssembly_log"
+* step5_finalclones
+}
 \description{
 summarize MiXCR IgSeq results as structured by https://github.com/heuselm/igseq_workflow.git
 }

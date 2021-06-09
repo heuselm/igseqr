@@ -9,6 +9,9 @@ summarizeIgSeq(IGSeq_resultset)
 \arguments{
 \item{IGSeq_resultset}{IgSeq resultset imported by importIgSeq function.}
 }
+\value{
+creates ggplot graphs in out_folder
+}
 \description{
 summarize MiXCR IgSeq results as structured by https://github.com/heuselm/igseq_workflow.git
 }

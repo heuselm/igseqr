@@ -1,7 +1,7 @@
 #' @title summarizeIgSeqResults
 #' @description summarize MiXCR IgSeq results as structured by https://github.com/heuselm/igseq_workflow.git
 #' @param IGSeq_resultset IgSeq resultset imported by importIgSeq function.
-#' @value creates ggplot graphs in out_folder
+#' @return creates ggplot graphs in out_folder
 #' @import data.table ggplot2 ggrepel
 #' @export
 
