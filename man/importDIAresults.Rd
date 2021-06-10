@@ -11,9 +11,10 @@ importDIAresults(report_location)
 }
 \value{
 DIAresult object (list) with
-* data_long - data.table of the report
-* overview - analysis overview from SN
-* settings - settings file
+data_long - data.table of the report
+data_wide - data.table of Protein.Group+Precursor.Id over the Ms runs/R.FileName
+overview - analysis overview from SN
+settings - settings file
 }
 \description{
 import MS results from Spectronaut
