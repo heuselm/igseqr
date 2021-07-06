@@ -3,7 +3,6 @@
 export(importDIAresults)
 export(importIgSeq)
 export(summarizeIgSeq)
-export(summarizeIgSeqResults)
 import(data.table)
 import(ggplot2)
 import(ggrepel)
