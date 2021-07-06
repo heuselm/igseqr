@@ -1,7 +1,7 @@
 #' @title importDIAresults
 #' @description import MS results from Spectronaut
 #' @param report_location path to the Spectronaut report (Factory default)
-#' @return DIAresult object (list) with
+#' @return DIA_resultset object (list) with
 #' data_long - data.table of the report
 #' data_wide - data.table of Protein.Group+Precursor.Id over the Ms runs/R.FileName
 #' overview - analysis overview from SN
@@ -9,7 +9,7 @@
 #' @import data.table
 #' @export
 
-importDIAresults = function(report_location){
+importDIAresults = function(report_location, study_design = NULL){
 
   # get the path
   path = dirname(report_location)
@@ -27,14 +27,21 @@ importDIAresults = function(report_location){
   }
 
   # extract study design if available
-  study_design = unique(data_long[, .(R.FileName, R.Condition, R.Replicate)])
-  names(study_design) = c("filename", "condition", "replicate")
+  if(is.null(study_design)){
+    study_design = unique(data_long[, .(R.FileName, R.Condition, R.Replicate)])
+    names(study_design) = c("filename", "condition", "replicate")
+  } else if (all(c("filename", "condition", "replicate") %in% names(study_design))){
+    study_design = study_design
+  } else{
+      warning("study_design does not contain necessary columns filename, condition, replicate")
+    }
 
   # reformat to wide:
   data_long_s = data_long[, .(PG.ProteinGroups, FG.Charge, FG.LabeledSequence, FG.Quantity, R.FileName)]
   data_long_s[, Precursor.Id:=paste0(gsub("_", "", FG.LabeledSequence), FG.Charge), row.names(data_long_s)]
+  data_long_s = merge(data_long_s, study_design, by.x = "R.FileName", by.y = "filename", all.y = F)
   setnames(data_long_s, "PG.ProteinGroups", "Protein.Group")
-  data_wide = dcast(data_long_s, Protein.Group+Precursor.Id~R.FileName,
+  data_wide = dcast(data_long_s, Protein.Group+Precursor.Id~condition+replicate,
                     value.var = "FG.Quantity")
 
   # Assemble result
