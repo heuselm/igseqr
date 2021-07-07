@@ -7,15 +7,23 @@
 #' @param comparison_matrix A matrix defining the comparisons to be run. column one contains the condition in the counter of each comparison, column two the denominator condition.
 #' in other words, positive log2FCs will mean higher signal in the conditions listed in column 1. For possible values, check unique(DIA_resultset$study_design$condition). Default: TRUE.
 #' If you would like to run all possible pairwise comparisons, enter "all_pairs". The data will be subset to the conditions specified in the comparison matrix.
-#' @param write_intermediate_results Whether the intermediate results of each pairwise comparison shall be written. Separate subfolders will be generated. Default: FALSE
+#' @param write_preprocessing_results Whether the intermediate results of each pairwise comparison shall be written. Separate subfolders will be generated. Default: FALSE
 #' @param write_csv_protein Whether to write differential abundance testing result table summarized to protein level (csv). Default: TRUE
 #' @param write_csv_precursor Whether to write differential abundance testing result table containing precursor level information (csv). Default: FALSE
 #' @param plot_pdf Whether to plot summary of the differential tests.
-#' @param plot_html Whether to plot interactive summary of the differential tests.
+#' @param plot_html If plotting summary, whether to also generate interactive summary of the differential tests.
+#' @param prot_highlight_tag tag that determines which protein.groups get highlighted
+#' @return DIA_resultset with appended element $differentialAbundanceTestResults  with tables
+#' $diffTestRes_prec
+#' $diffTestRes_prot
+#' $comparison_matrix
+#' $data_source
+#' $study_design
+#' $data_long
+#' $data_matrix_log2
+#' $data_matrix_log2_imp
 #'
-#' @return DIA_resultset with added element $differentialAbundanceTestResults with sub-tables $experimental_design $comparison_matrix, $diffRes_pep and $diffRes_prot
-#'
-#' @import data.table ggplot2 ggrepel seqinr
+#' @import data.table ggplot2 DiffTestR
 #'
 #' @export
 
@@ -26,11 +34,97 @@ differentialAbundanceTestMS = function(DIA_resultset,
                                                                     "AP_m1_tF", "AP_m1_t0",
                                                                     "AP_m2_tF", "AP_m2_t0"),
                                                                   ncol = 2, byrow = TRUE),
-                                       write_intermediate_results = TRUE,
+                                       write_preprocessing_results = TRUE,
                                        write_diffTable_csv_protein = TRUE,
                                        write_diffTable_csv_precursor = TRUE,
                                        plot_pdf = TRUE,
-                                       plot_html = TRUE){
+                                       plot_html = TRUE,
+                                       prot_highlight_tag = "IGSeq"){
 
+  # Initialize table to collect Results across the differential tests
+  cRes = data.table()
+
+  # If needed, overwrite experimental design
+  if(!is.null(study_design_external)){
+    study_des = study_design_external
+  } else {
+    study_des = DIA_resultset$study_design
+  }
+
+  # Subset study design to those of interest in the current comparisons:
+  study_des_oi = study_des[condition %in% comparison_matrix]
+  pairs_oi = comparison_matrix
+
+  for (i in 1:nrow(pairs_oi)){
+
+    # say what's happening
+    message("Running comparison ",i," of ", nrow(pairs_oi),":\n",
+            pairs_oi[i,1], " vs ",  pairs_oi[i,2])
+
+    diffTestRes = testDifferentialAbundance(input_dt = ms_r06$data_wide,
+                                            study_design = study_des_oi,
+                                            condition_1 = pairs_oi[i,1],
+                                            condition_2 = pairs_oi[i,2],
+
+                                            # Define normalization behavior
+                                            normalize_data = TRUE,
+                                            normalization_function = limma::normalizeQuantiles,
+
+                                            # filtering (only global filtering implemented)
+                                            min_n_obs = 4,
+                                            # imputation of missing values
+                                            imp_percentile = 0.001,
+                                            imp_sd = 0.2,
+
+                                            # plots?
+                                            plot_pdf = if(i==1){TRUE}else{FALSE},
+                                            # tsv result table?
+                                            write_tsv_tables = FALSE,
+                                            # highlight protein in volcano?
+                                            target_protein = "IGSeq")
+
+    if(i==1 & write_preprocessing_results){
+      saveRDS(diffTestRes, file = "differentialAbundanceTestMS_Example.rds")
+      fwrite(diffTestRes$diffExpr_result_dt, file = "differentialAbundanceTestMS_ExampleScaledInt.csv")
+    }
+
+    cRes = rbind(cRes, diffTestRes$diffExpr_result_dt)
+
+  }
+  if (write_diffTable_csv_precursor){
+    fwrite(cRes, "differentialAbundanceTestMSResults_PrecursorLevel.csv")
+  }
+
+  cRes_prot = unique(cRes[, .(Protein.Group, Protein.Names, comparison, target_prot,
+                              log2_fold_change_protein,n_precursors,p_value_protein,p_value_BHadj_protein)])
+  if (write_diffTable_csv_protein){
+    fwrite(cRes_prot, "differentialAbundanceTestMSResults_ProteinLevel.csv")
+  }
+
+  if (plot_pdf){
+    diffOverview = DiffTestR::plotDifferentialAbundanceOverview(cRes,
+                                                                label_prefix = "IGSeq_M1imm_APMS_batch1_t3t0",
+                                                                browsable_html = plot_html,
+                                                                protein_highlight_tag = prot_highlight_tag)
+
+  }
+
+  # Assemble results and append to input object
+  res = list("diffTestRes_prec" = cRes,
+             "diffTestRes_prot" = cRes_prot,
+             "comparison_matrix" = comparison_matrix,
+             "data_source" = diffTestRes$data_source,
+             "study_design" = diffTestRes$study_design,
+             "data_long" = diffTestRes$data_long,
+             "data_matrix_log2" = diffTestRes$data_matrix_log2,
+             "data_matrix_log2_imp" = diffTestRes$data_matrix_log2_imp)
+
+  if ("differentialAbundanceTestMSResults$" %in% names(DIA_resultset)){
+    stop("DIA MS resultset already contains differential abundance test results.
+         Rename or remove these before running a new differential test.")
+  } else{
+    DIA_resultset$differentialAbundanceTestMSResults = res
+    return(DIA_resultset)
+  }
 
 }
