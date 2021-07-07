@@ -23,6 +23,9 @@ assembleFastaDb(
 \item{write_fasta_per_sample}{Whether to write separate .fasta files per sample. Default: FALSE}
 
 \item{write_clone_tables}{Whether to write clone .tsv tables next to .fasta files. Default: TRUE}
+
+\item{subset_cloneIdGlobal}{Whether to subset clones to be included in fasta file. Character vector of global clone IDs.
+Default: Null, All clones included.}
 }
 \value{
 IGSeq_resultset with added element step6_clonestofasta

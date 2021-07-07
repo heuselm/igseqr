@@ -4,12 +4,22 @@
 \alias{importIgSeq}
 \title{summarizeIgSeqResults}
 \usage{
-importIgSeq(result_folder = ".", write_tables = TRUE, summarize_in_pdfs = TRUE)
+importIgSeq(
+  result_folder = ".",
+  write_tables = TRUE,
+  summarize_in_pdfs = TRUE,
+  chain_type_index_end = 4
+)
 }
 \arguments{
 \item{result_folder}{Location of the IgSeq-workflow result folder.}
 
 \item{write_tables}{Switch whether the collected summary information should be output as .csv tables}
+
+\item{summarize_in_pdfs}{Whether the results are directly summarized via summarizeIgSeq function. Default: TRUE}
+
+\item{chain_type_index_end}{End character position in AllCHitsWithScore column to assign chain type.
+Default: 4 (differentiates isotypes, e.g. IGHG from IGHM). If set to 3, all isotypes will be considered IGH chains, w/o differentiation.}
 }
 \value{
 IGSeq result object (list) with tables
