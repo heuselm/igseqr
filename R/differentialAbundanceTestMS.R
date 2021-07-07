@@ -81,11 +81,11 @@ differentialAbundanceTestMS = function(DIA_resultset,
                                             # tsv result table?
                                             write_tsv_tables = FALSE,
                                             # highlight protein in volcano?
-                                            target_protein = "IGSeq")
+                                            target_protein = prot_highlight_tag)
 
     if(i==1 & write_preprocessing_results){
       saveRDS(diffTestRes, file = "differentialAbundanceTestMS_Example.rds")
-      fwrite(diffTestRes$diffExpr_result_dt, file = "differentialAbundanceTestMS_ExampleScaledInt.csv")
+      fwrite(diffTestRes$diffExpr_result_dt, file = "differentialAbundanceTestMS_ScaledIntensities.csv")
     }
 
     cRes = rbind(cRes, diffTestRes$diffExpr_result_dt)
