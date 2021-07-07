@@ -7,6 +7,7 @@
 importIgSeq(
   result_folder = ".",
   write_tables = TRUE,
+  report_folder = "importIgSeq_log",
   summarize_in_pdfs = TRUE,
   chain_type_index_end = 4
 )

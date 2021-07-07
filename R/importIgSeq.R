@@ -21,7 +21,11 @@
 
 #' @export
 
-importIgSeq <- function(result_folder = ".", write_tables = TRUE, summarize_in_pdfs = TRUE, chain_type_index_end = 4){
+importIgSeq <- function(result_folder = ".",
+                        write_tables = TRUE,
+                        report_folder = "importIgSeq_log",
+                        summarize_in_pdfs = TRUE,
+                        chain_type_index_end = 4){
 
   ### collect & process IGSeq results
 
@@ -92,7 +96,7 @@ importIgSeq <- function(result_folder = ".", write_tables = TRUE, summarize_in_p
   }
 
   # Annotate chain type and re-index
-  step5_finalclones[, chain_type:=substr(allCHitsWithScore, 1, 4)]
+  step5_finalclones[, chain_type:=substr(allCHitsWithScore, 1, chain_type_index_end)]
   step5_finalclones[chain_type == "", chain_type:=substr(allVHitsWithScore, 1, chain_type_index_end)]
 
   # Re-index clones by chain type
@@ -108,12 +112,14 @@ importIgSeq <- function(result_folder = ".", write_tables = TRUE, summarize_in_p
 
   ## Write tables
   if (write_tables){
-    fwrite(step1_checkout, paste0("summarizeIgSeq_", "step1_checkout.csv"))
-    fwrite(step2_histogram, paste0("summarizeIgSeq_", "step2_histogram.csv"))
-    fwrite(step3_assemble, paste0("summarizeIgSeq_", "step3_assemble.csv"))
-    fwrite(step4_align, paste0("summarizeIgSeq_", "step4_align.csv"))
-    fwrite(step5_cloneAssemblyReports_num, paste0("summarizeIgSeq_", "step5_cloneAssemblyReports_num.csv"))
-    fwrite(step5_finalclones, paste0("summarizeIgSeq_", "step5_finalclones.csv"))
+    if (!dir.exists(report_folder)){dir.create(report_folder)} else{
+      warning("report_folder ", report_folder, " already exists, contents are potentially being overwritten")}
+    fwrite(step1_checkout, paste0(report_folder,"/", "summarizeIgSeq_", "step1_checkout.csv"))
+    fwrite(step2_histogram, paste0(report_folder,"/","summarizeIgSeq_", "step2_histogram.csv"))
+    fwrite(step3_assemble, paste0(report_folder,"/","summarizeIgSeq_", "step3_assemble.csv"))
+    fwrite(step4_align, paste0(report_folder,"/","summarizeIgSeq_", "step4_align.csv"))
+    fwrite(step5_cloneAssemblyReports_num, paste0(report_folder,"/","summarizeIgSeq_", "step5_cloneAssemblyReports_num.csv"))
+    fwrite(step5_finalclones, paste0(report_folder,"/","summarizeIgSeq_", "step5_finalclones.csv"))
   }
 
   res = list("step1_checkout_log" = step1_checkout,
@@ -125,7 +131,7 @@ importIgSeq <- function(result_folder = ".", write_tables = TRUE, summarize_in_p
              "step5_finalclones" = step5_finalclones)
 
   if(summarize_in_pdfs){
-    summarizeIgSeq(res)
+    summarizeIgSeq(res, report_folder = report_folder)
   }
 
   return(res)

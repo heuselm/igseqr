@@ -4,7 +4,7 @@
 \alias{summarizeIgSeq}
 \title{summarizeIgSeqResults}
 \usage{
-summarizeIgSeq(IGSeq_resultset)
+summarizeIgSeq(IGSeq_resultset, report_folder = "summarizeIgSeq_out")
 }
 \arguments{
 \item{IGSeq_resultset}{IgSeq resultset imported by importIgSeq function.}
