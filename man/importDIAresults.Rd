@@ -4,13 +4,13 @@
 \alias{importDIAresults}
 \title{importDIAresults}
 \usage{
-importDIAresults(report_location)
+importDIAresults(report_location, study_design = NULL)
 }
 \arguments{
 \item{report_location}{path to the Spectronaut report (Factory default)}
 }
 \value{
-DIAresult object (list) with
+DIA_resultset object (list) with
 data_long - data.table of the report
 data_wide - data.table of Protein.Group+Precursor.Id over the Ms runs/R.FileName
 overview - analysis overview from SN

@@ -41,7 +41,7 @@ importDIAresults = function(report_location, study_design = NULL){
   data_long_s[, Precursor.Id:=paste0(gsub("_", "", FG.LabeledSequence), FG.Charge), row.names(data_long_s)]
   data_long_s = merge(data_long_s, study_design, by.x = "R.FileName", by.y = "filename", all.y = F)
   setnames(data_long_s, "PG.ProteinGroups", "Protein.Group")
-  data_wide = dcast(data_long_s, Protein.Group+Precursor.Id~condition+replicate,
+  data_wide = dcast(data_long_s, Protein.Group+Precursor.Id~R.FileName,
                     value.var = "FG.Quantity")
 
   # Assemble result
