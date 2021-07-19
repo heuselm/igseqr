@@ -4,9 +4,11 @@
 #'
 #' @param DIA_resultset DIA-MS resultset imported by importDIAresults function.
 #' @param study_design_external Alternative study design overwriting the study design in DIA_resultset containing columns filename
-#' @param comparison_matrix A matrix defining the comparisons to be run. column one contains the condition in the counter of each comparison, column two the denominator condition.
-#' in other words, positive log2FCs will mean higher signal in the conditions listed in column 1. For possible values, check unique(DIA_resultset$study_design$condition). Default: TRUE.
-#' If you would like to run all possible pairwise comparisons, enter "all_pairs". The data will be subset to the conditions specified in the comparison matrix.
+#' @param comparison_matrix A matrix defining the comparisons to be run.
+#' Column one contains the condition in the counter of each comparison, column two condition in the denominator of the comparison.
+#' Positive log2FCs will mean higher signal in counter condition listed in column 1.
+#' For possible values, check unique(DIA_resultset$study_design$condition).
+#' The data will be subset to the conditions specified in the comparison matrix.
 #' @param write_preprocessing_results Whether the intermediate results of each pairwise comparison shall be written. Separate subfolders will be generated. Default: FALSE
 #' @param write_csv_protein Whether to write differential abundance testing result table summarized to protein level (csv). Default: TRUE
 #' @param write_csv_precursor Whether to write differential abundance testing result table containing precursor level information (csv). Default: FALSE
