@@ -9,6 +9,7 @@
 #' @param write_clone_tables Whether to write clone .tsv tables next to .fasta files. Default: TRUE
 #' @param subset_cloneIdGlobal Whether to subset clones to be included in fasta file. Character vector of global clone IDs.
 #' @param gsub_sample_id character vector of length 2, Whether to replace certain string in sample IDs (element 1) with (element 2). Default: Null (no editing of SAMPLE_ID)
+# @param prepend_chaintype whether chain_type should be prepended to(at the beginning of) clonIdGlobal
 #'
 #' Default: Null, All clones included.
 #'
@@ -46,7 +47,7 @@ assembleFastaDb = function(IGSeq_resultset, dataset_tag = NULL, write_fasta = TR
   IGSeq_resultset$step6_clonestofasta[, aaSeq_AllComplete :=!grepl("_", aaSeq_fullVarDomain), row.names(IGSeq_resultset$step6_clonestofasta)]
 
   # Make fasta headers
-  IGSeq_resultset$step6_clonestofasta[, fasta_header:=gsub(",", ";", paste0("igseq|", chain_type, "_", cloneIdGlobal, "|", chain_type, "_", cloneIdGlobal, " ", " primaryCHitWithScore: ",
+  IGSeq_resultset$step6_clonestofasta[, fasta_header:=gsub(",", ";", paste0("igseq|", cloneIdGlobal, "|", chain_type, "_", cloneIdGlobal, " ", " primaryCHitWithScore: ",
                                                           substr(allCHitsWithScore, 1,15), " vdj_genes:", allVHitsWithScore, allDHitsWithScore, allJHitsWithScore,
                                                           " domain_lengths(fr1-cdr1-fr2-cdr2-fr3-cdr3-fr4):", aaSeq_lengths,
                                                           " countInSeq:", cloneCount)), cloneIdGlobal]
