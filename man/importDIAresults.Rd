@@ -8,14 +8,18 @@ importDIAresults(report_location, study_design = NULL)
 }
 \arguments{
 \item{report_location}{path to the Spectronaut report (Factory default)}
+
+\item{study_design}{alternative study design to use, data.table of filename, condition, replicate.
+If not provided, an attempt will be made to extract the study design from the imported DIA results.}
 }
 \value{
 DIA_resultset object (list) with
 data_long - data.table of the report
 data_wide - data.table of Protein.Group+Precursor.Id over the Ms runs/R.FileName
+study_design - study design table of filename, condition, replicate
 overview - analysis overview from SN
 settings - settings file
 }
 \description{
-import MS results from Spectronaut
+import DIA-MS quantitative results from Spectronaut
 }

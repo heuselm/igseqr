@@ -1,9 +1,12 @@
 #' @title importDIAresults
-#' @description import MS results from Spectronaut
+#' @description import DIA-MS quantitative results from Spectronaut
 #' @param report_location path to the Spectronaut report (Factory default)
+#' @param study_design alternative study design to use, data.table of filename, condition, replicate.
+#' If not provided, an attempt will be made to extract the study design from the imported DIA results.
 #' @return DIA_resultset object (list) with
 #' data_long - data.table of the report
 #' data_wide - data.table of Protein.Group+Precursor.Id over the Ms runs/R.FileName
+#' study_design - study design table of filename, condition, replicate
 #' overview - analysis overview from SN
 #' settings - settings file
 #' @import data.table
