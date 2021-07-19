@@ -10,7 +10,8 @@ assembleFastaDb(
   write_fasta = TRUE,
   write_fasta_per_sample = FALSE,
   write_clone_tables = TRUE,
-  write_fasta_subset_cloneIdGlobal = NULL
+  write_fasta_subset_cloneIdGlobal = NULL,
+  gsub_sample_id = NULL
 )
 }
 \arguments{
@@ -24,8 +25,11 @@ assembleFastaDb(
 
 \item{write_clone_tables}{Whether to write clone .tsv tables next to .fasta files. Default: TRUE}
 
-\item{subset_cloneIdGlobal}{Whether to subset clones to be included in fasta file. Character vector of global clone IDs.
+\item{gsub_sample_id}{character vector of length 2, Whether to replace certain string in sample IDs (element 1) with (element 2). Default: Null (no editing of SAMPLE_ID)
+
 Default: Null, All clones included.}
+
+\item{subset_cloneIdGlobal}{Whether to subset clones to be included in fasta file. Character vector of global clone IDs.}
 }
 \value{
 IGSeq_resultset with added element step6_clonestofasta
