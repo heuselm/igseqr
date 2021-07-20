@@ -11,7 +11,8 @@ assembleFastaDb(
   write_fasta_per_sample = FALSE,
   write_clone_tables = TRUE,
   write_fasta_subset_cloneIdGlobal = NULL,
-  gsub_sample_id = NULL
+  gsub_sample_id = NULL,
+  prefix_chain_type = FALSE
 )
 }
 \arguments{
@@ -25,7 +26,9 @@ assembleFastaDb(
 
 \item{write_clone_tables}{Whether to write clone .tsv tables next to .fasta files. Default: TRUE}
 
-\item{gsub_sample_id}{character vector of length 2, Whether to replace certain string in sample IDs (element 1) with (element 2). Default: Null (no editing of SAMPLE_ID)
+\item{gsub_sample_id}{character vector of length 2, Whether to replace certain string in sample IDs (element 1) with (element 2). Default: Null (no editing of SAMPLE_ID)}
+
+\item{prefix_chain_type}{whether chain_type should be prepended to(at the beginning of) cloneIdGlobal. Default: FALSE
 
 Default: Null, All clones included.}
 

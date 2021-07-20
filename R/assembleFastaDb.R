@@ -9,7 +9,7 @@
 #' @param write_clone_tables Whether to write clone .tsv tables next to .fasta files. Default: TRUE
 #' @param subset_cloneIdGlobal Whether to subset clones to be included in fasta file. Character vector of global clone IDs.
 #' @param gsub_sample_id character vector of length 2, Whether to replace certain string in sample IDs (element 1) with (element 2). Default: Null (no editing of SAMPLE_ID)
-# @param prepend_chaintype whether chain_type should be prepended to(at the beginning of) clonIdGlobal
+#' @param prefix_chain_type whether chain_type should be prepended to(at the beginning of) cloneIdGlobal. Default: FALSE
 #'
 #' Default: Null, All clones included.
 #'
@@ -19,7 +19,14 @@
 #'
 #' @export
 
-assembleFastaDb = function(IGSeq_resultset, dataset_tag = NULL, write_fasta = TRUE, write_fasta_per_sample = FALSE, write_clone_tables = TRUE, write_fasta_subset_cloneIdGlobal = NULL, gsub_sample_id = NULL){
+assembleFastaDb = function(IGSeq_resultset,
+                           dataset_tag = NULL,
+                           write_fasta = TRUE,
+                           write_fasta_per_sample = FALSE,
+                           write_clone_tables = TRUE,
+                           write_fasta_subset_cloneIdGlobal = NULL,
+                           gsub_sample_id = NULL,
+                           prefix_chain_type = FALSE){
 
   # Get Dataset tag if not provided
   if (is.null(dataset_tag)){
@@ -34,7 +41,14 @@ assembleFastaDb = function(IGSeq_resultset, dataset_tag = NULL, write_fasta = TR
     IGSeq_resultset$step5_finalclones[, SAMPLE_ID:=gsub(gsub_sample_id[1],gsub_sample_id[2], SAMPLE_ID)]
   }
 
-  IGSeq_resultset$step5_finalclones[, cloneIdGlobal:=paste0(dataset_tag, SAMPLE_ID, "_", cloneId), .(cloneId, SAMPLE_ID)]
+  if(prefix_chain_type){
+    IGSeq_resultset$step5_finalclones[, cloneIdGlobal:=paste0(chain_type, "_", dataset_tag, SAMPLE_ID, "_", cloneId), .(cloneId, SAMPLE_ID)]
+
+  } else{
+    IGSeq_resultset$step5_finalclones[, cloneIdGlobal:=paste0(dataset_tag, SAMPLE_ID, "_", cloneId), .(cloneId, SAMPLE_ID)]
+  }
+
+
   IGSeq_resultset$step6_clonestofasta = copy(IGSeq_resultset$step5_finalclones)
 
   # Assemble metainfo for Protein Description
