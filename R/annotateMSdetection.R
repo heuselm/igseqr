@@ -13,7 +13,15 @@
 #' @return IGSeq_resultset with added element step7_clonesMSdetection with tables $clones_detected
 #' and quantitative matrices across the MS runs in the DIA_resultset calculated from all mapped or only unique peptides
 #' according to the n_prot_uniqueness threshold set as parameter:
-#' $MS_abundance_allprecursors_mean, $MS_abundance_uniqueprecursors_mean
+#' $MS_abundance_allprecursors_mean, $MS_abundance_uniqueprecursors_mean.
+#' In addition, the study design of the DIA_resultset is used to aggregate and report quantities and frequency of observation
+#' (mean and sd of precursor intensities and n_rep) across conditions. There are calculated
+#' including only *unique* precursors (note n_prot_uniqueness_threshold parameter to modify this inclusion criterion).
+#' The result matrices are stored as list elements in the result object with names:
+#'  MS_abundance_uniqueprecursors_mean_cond_rep, MS_abundance_uniqueprecursors_mean_cond,
+#'  MS_abundance_uniqueprecursors_sd_cond, MS_detection_uniqueprecursors_nrep_cond,
+#'  MS_abundance_uniqueprecursors_mean_long. Further, the study_design from the DIA_resultset is propagated to the resultset in slot
+#'  $study_design
 #'
 #' @import data.table
 #'
@@ -125,32 +133,52 @@ annotateMSdetection = function(IGSeq_resultset = seq_r06_fasta,
   MS_abundance_uniqueprecursors_mean_cond.m = as.matrix(MS_abundance_uniqueprecursors_mean_cond[, 2:ncol(MS_abundance_uniqueprecursors_mean_cond)])
   row.names(MS_abundance_uniqueprecursors_mean_cond.m) = MS_abundance_uniqueprecursors_mean_cond$cloneIdGlobal
 
+  # MS abundance standard deviation per condition
+  MS_abundance_uniqueprecursors_sd_cond = dcast(MS_abundance_uniqueprecursors_mean_long, cloneIdGlobal~condition,
+                                                  value.var = "MS_abundance_uniqueprecursors_mean", fun.aggregate = sd, fill = 0)
+  MS_abundance_uniqueprecursors_sd_cond.m = as.matrix(MS_abundance_uniqueprecursors_sd_cond[, 2:ncol(MS_abundance_uniqueprecursors_sd_cond)])
+  row.names(MS_abundance_uniqueprecursors_sd_cond.m) = MS_abundance_uniqueprecursors_sd_cond$cloneIdGlobal
+
+
   # MS detection (# of replicates) per condition
-  MS_detection_uniqueprecursors_condition = dcast(MS_abundance_uniqueprecursors_mean_long, cloneIdGlobal~condition, value.var = "nrep",
+  MS_detection_uniqueprecursors_nrep_cond = dcast(MS_abundance_uniqueprecursors_mean_long, cloneIdGlobal~condition, value.var = "nrep",
                                                   fun.aggregate = unique, fill = 0)
-  MS_detection_uniqueprecursors_condition.m = as.matrix(MS_detection_uniqueprecursors_condition[, 2:ncol(MS_detection_uniqueprecursors_condition)])
-  row.names(MS_detection_uniqueprecursors_condition.m) = MS_detection_uniqueprecursors_condition$cloneIdGlobal
+  MS_detection_uniqueprecursors_nrep_cond.m = as.matrix(MS_detection_uniqueprecursors_nrep_cond[, 2:ncol(MS_detection_uniqueprecursors_nrep_cond)])
+  row.names(MS_detection_uniqueprecursors_nrep_cond.m) = MS_detection_uniqueprecursors_nrep_cond$cloneIdGlobal
 
   # MS_abundance with these metrics in long format
 
   # write to result object:
   IGSeq_resultset[[res_list_name]]$MS_abundance_uniqueprecursors_mean_cond_rep = MS_abundance_uniqueprecursors_mean_cond_rep.m
   IGSeq_resultset[[res_list_name]]$MS_abundance_uniqueprecursors_mean_cond = MS_abundance_uniqueprecursors_mean_cond.m
-  IGSeq_resultset[[res_list_name]]$MS_detection_uniqueprecursors_condition = MS_detection_uniqueprecursors_condition.m
+  IGSeq_resultset[[res_list_name]]$MS_abundance_uniqueprecursors_sd_cond = MS_abundance_uniqueprecursors_sd_cond.m
+  IGSeq_resultset[[res_list_name]]$MS_detection_uniqueprecursors_nrep_cond = MS_detection_uniqueprecursors_nrep_cond.m
   IGSeq_resultset[[res_list_name]]$MS_abundance_uniqueprecursors_mean_long = MS_abundance_uniqueprecursors_mean_long
   IGSeq_resultset[[res_list_name]]$study_design = DIA_resultset$study_design
 
   if (write_table){
     # Assemble & write combined table from MSannotation results
+    table2 = IGSeq_resultset[[res_list_name]]$MS_abundance_allprecursors_mean
+    colnames(table2) = paste("MS_abundance_allprecursors_mean",colnames(table2))
+
+    table3 = IGSeq_resultset[[res_list_name]]$MS_abundance_uniqueprecursors_mean
+    colnames(table3) = paste("MS_abundance_uniqueprecursors_mean", colnames(table3))
+
+    table4 = MS_abundance_uniqueprecursors_mean_cond.m
+    colnames(table4) = paste("MS_abundance_uniqueprecursors_mean_cond", colnames(table4))
+
+    table5 = MS_abundance_uniqueprecursors_sd_cond.m
+    colnames(table5) = paste("MS_abundance_uniqueprecursors_sd_cond", colnames(table5))
+
+    table6 = MS_detection_uniqueprecursors_nrep_cond.m
+    colnames(table6) = paste("MS_detection_uniqueprecursors_nrep_cond", colnames(table6))
+
     clone_detection_and_quant = cbind(IGSeq_resultset[[res_list_name]]$clones_detected,
-                                      IGSeq_resultset[[res_list_name]]$MS_abundance_allprecursors_mean,
-                                      IGSeq_resultset[[res_list_name]]$MS_abundance_uniqueprecursors_mean)
+                                      table2,table3,table4,table5,table6)
     fwrite(clone_detection_and_quant,
            file = file_out_name)
 
-    fwrite(MS_detection_uniqueprecursors_condition,
-           file = gsub(".csv", "_cond_nrep.csv", file_out_name))
-
   }
+
   return(IGSeq_resultset)
 }

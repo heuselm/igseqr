@@ -27,7 +27,15 @@ Defaults to 1, i.e. only peptides mapping to only one of the clones in the conte
 IGSeq_resultset with added element step7_clonesMSdetection with tables $clones_detected
 and quantitative matrices across the MS runs in the DIA_resultset calculated from all mapped or only unique peptides
 according to the n_prot_uniqueness threshold set as parameter:
-$MS_abundance_allprecursors_mean, $MS_abundance_uniqueprecursors_mean
+$MS_abundance_allprecursors_mean, $MS_abundance_uniqueprecursors_mean.
+In addition, the study design of the DIA_resultset is used to aggregate and report quantities and frequency of observation
+(mean and sd of precursor intensities and n_rep) across conditions. There are calculated
+including only *unique* precursors (note n_prot_uniqueness_threshold parameter to modify this inclusion criterion).
+The result matrices are stored as list elements in the result object with names:
+ MS_abundance_uniqueprecursors_mean_cond_rep, MS_abundance_uniqueprecursors_mean_cond,
+ MS_abundance_uniqueprecursors_sd_cond, MS_detection_uniqueprecursors_nrep_cond,
+ MS_abundance_uniqueprecursors_mean_long. Further, the study_design from the DIA_resultset is propagated to the resultset in slot
+ $study_design
 }
 \description{
 annotate MS detection of IGSeq clones based on DIA_resultset
