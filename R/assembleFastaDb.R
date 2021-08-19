@@ -61,7 +61,7 @@ assembleFastaDb = function(IGSeq_resultset,
   IGSeq_resultset$step6_clonestofasta[, aaSeq_AllComplete :=!grepl("_", aaSeq_fullVarDomain), row.names(IGSeq_resultset$step6_clonestofasta)]
 
   # Make fasta headers
-  IGSeq_resultset$step6_clonestofasta[, fasta_header:=gsub(",", ";", paste0("igseq|", cloneIdGlobal, "|", chain_type, "_", cloneIdGlobal, " ", " primaryCHitWithScore: ",
+  IGSeq_resultset$step6_clonestofasta[, fasta_header:=gsub(",", ";", paste0("igseq|", cloneIdGlobal, "|", cloneIdGlobal, " ", " primaryCHitWithScore: ",
                                                           substr(allCHitsWithScore, 1,15), " vdj_genes:", allVHitsWithScore, allDHitsWithScore, allJHitsWithScore,
                                                           " domain_lengths(fr1-cdr1-fr2-cdr2-fr3-cdr3-fr4):", aaSeq_lengths,
                                                           " countInSeq:", cloneCount)), cloneIdGlobal]
