@@ -63,7 +63,7 @@ differentialAbundanceTestMS = function(DIA_resultset,
     message("Running comparison ",i," of ", nrow(pairs_oi),":\n",
             pairs_oi[i,1], " vs ",  pairs_oi[i,2])
 
-    diffTestRes = testDifferentialAbundance(input_dt = ms_r06$data_wide,
+    diffTestRes = testDifferentialAbundance(input_dt = DIA_resultset$data_wide,
                                             study_design = study_des_oi,
                                             condition_1 = pairs_oi[i,1],
                                             condition_2 = pairs_oi[i,2],
