@@ -83,7 +83,7 @@ annotateMSdetection = function(IGSeq_resultset = seq_r06_fasta,
     quant_prot_all = colSums(quant_prec, na.rm = TRUE)
 
     # Unique precursors only
-    quant_wide_unique = quant_wide[n_proteins == n_prot_uniqueness_threshold]
+    quant_wide_unique = quant_wide[n_proteins <= n_prot_uniqueness_threshold]
     quant_prec_unique = as.matrix(quant_wide_unique[,3:ncol(quant_wide_unique)])
     n_precursors_unique = length(unique(quant_wide_unique$Precursor.Id))
     n_peptides_unique = length(unique(sapply(quant_wide_unique$Precursor.Id, function(x){substr(x, 1, nchar(x)-1)})))
