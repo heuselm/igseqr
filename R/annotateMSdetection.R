@@ -35,7 +35,8 @@ annotateMSdetection = function(IGSeq_resultset = seq_r06_fasta,
 
   message("IGSeq-res: ", deparse(substitute(IGSeq_resultset)))
   message("DIA-res: ", deparse(substitute(DIA_resultset)))
-  file_out_name = paste0("MSdetection_", deparse(substitute(IGSeq_resultset)), "_", deparse(substitute(DIA_resultset)), ".csv")
+  file_out_name = paste0("MSdetection_", deparse(substitute(IGSeq_resultset)), "_",
+                         deparse(substitute(DIA_resultset)), "_nu", n_prot_uniqueness_threshold, ".csv")
 
   # Create target object name depending on input
   res_list_name = paste0("step7_MS_detection_", deparse(substitute(DIA_resultset)))
