@@ -12,6 +12,7 @@
 #' @param write_preprocessing_results Whether the intermediate results of each pairwise comparison shall be written. Separate subfolders will be generated. Default: FALSE
 #' @param write_csv_protein Whether to write differential abundance testing result table summarized to protein level (csv). Default: TRUE
 #' @param write_csv_precursor Whether to write differential abundance testing result table containing precursor level information (csv). Default: FALSE
+#' @param overview_label_prefix Prefix label for the differential abundance overview .pdf and interactive .html plots
 #' @param plot_pdf Whether to plot summary of the differential tests.
 #' @param plot_html If plotting summary, whether to also generate interactive summary of the differential tests.
 #' @param prot_highlight_tag tag that determines which protein.groups get highlighted
@@ -30,18 +31,19 @@
 #' @export
 
 differentialAbundanceTestMS = function(DIA_resultset,
-                                       study_design_external = NULL,
-                                       comparison_matrix = matrix(c("AP_m11_tF", "AP_m11_t0",
-                                                                    "AP_m12_tF", "AP_m12_t0",
-                                                                    "AP_m1_tF", "AP_m1_t0",
-                                                                    "AP_m2_tF", "AP_m2_t0"),
-                                                                  ncol = 2, byrow = TRUE),
-                                       write_preprocessing_results = TRUE,
-                                       write_diffTable_csv_protein = TRUE,
-                                       write_diffTable_csv_precursor = TRUE,
-                                       plot_pdf = TRUE,
-                                       plot_html = TRUE,
-                                       prot_highlight_tag = "IGSeq"){
+                                         study_design_external = NULL,
+                                         comparison_matrix = matrix(c("AP_m11_tF", "AP_m11_t0",
+                                                                      "AP_m12_tF", "AP_m12_t0",
+                                                                      "AP_m1_tF", "AP_m1_t0",
+                                                                      "AP_m2_tF", "AP_m2_t0"),
+                                                                    ncol = 2, byrow = TRUE),
+                                         write_preprocessing_results = TRUE,
+                                         write_diffTable_csv_protein = TRUE,
+                                         write_diffTable_csv_precursor = TRUE,
+                                         overview_label_prefix = "IGSeq_M1imm_APMS_batch1_t3t0",
+                                         plot_pdf = TRUE,
+                                         plot_html = TRUE,
+                                         prot_highlight_tag = "IGSeq"){
 
   # Initialize table to collect Results across the differential tests
   cRes = data.table()
@@ -64,26 +66,26 @@ differentialAbundanceTestMS = function(DIA_resultset,
             pairs_oi[i,1], " vs ",  pairs_oi[i,2])
 
     diffTestRes = testDifferentialAbundance(input_dt = DIA_resultset$data_wide,
-                                            study_design = study_des_oi,
-                                            condition_1 = pairs_oi[i,1],
-                                            condition_2 = pairs_oi[i,2],
+                                              study_design = study_des_oi,
+                                              condition_1 = pairs_oi[i,1],
+                                              condition_2 = pairs_oi[i,2],
 
-                                            # Define normalization behavior
-                                            normalize_data = TRUE,
-                                            normalization_function = limma::normalizeQuantiles,
+                                              # Define normalization behavior
+                                              normalize_data = TRUE,
+                                              normalization_function = limma::normalizeQuantiles,
 
-                                            # filtering (only global filtering implemented)
-                                            min_n_obs = 4,
-                                            # imputation of missing values
-                                            imp_percentile = 0.001,
-                                            imp_sd = 0.2,
+                                              # filtering (only global filtering implemented)
+                                              min_n_obs = 4,
+                                              # imputation of missing values
+                                              imp_percentile = 0.001,
+                                              imp_sd = 0.2,
 
-                                            # plots?
-                                            plot_pdf = if(i==1){TRUE}else{FALSE},
-                                            # tsv result table?
-                                            write_tsv_tables = FALSE,
-                                            # highlight protein in volcano?
-                                            target_protein = prot_highlight_tag)
+                                              # plots?
+                                              plot_pdf = if(i==1){TRUE}else{FALSE},
+                                              # tsv result table?
+                                              write_tsv_tables = FALSE,
+                                              # highlight protein in volcano?
+                                              target_protein = prot_highlight_tag)
 
     if(i==1 & write_preprocessing_results){
       saveRDS(diffTestRes, file = "differentialAbundanceTestMS_Example.rds")
@@ -105,7 +107,7 @@ differentialAbundanceTestMS = function(DIA_resultset,
 
   if (plot_pdf){
     diffOverview = DiffTestR::plotDifferentialAbundanceOverview(cRes,
-                                                                label_prefix = "IGSeq_M1imm_APMS_batch1_t3t0",
+                                                                label_prefix = overview_label_prefix,
                                                                 browsable_html = plot_html,
                                                                 protein_highlight_tag = prot_highlight_tag)
 

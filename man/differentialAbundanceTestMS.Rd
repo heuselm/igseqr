@@ -12,6 +12,7 @@ differentialAbundanceTestMS(
   write_preprocessing_results = TRUE,
   write_diffTable_csv_protein = TRUE,
   write_diffTable_csv_precursor = TRUE,
+  overview_label_prefix = "IGSeq_M1imm_APMS_batch1_t3t0",
   plot_pdf = TRUE,
   plot_html = TRUE,
   prot_highlight_tag = "IGSeq"
@@ -29,6 +30,8 @@ For possible values, check unique(DIA_resultset$study_design$condition).
 The data will be subset to the conditions specified in the comparison matrix.}
 
 \item{write_preprocessing_results}{Whether the intermediate results of each pairwise comparison shall be written. Separate subfolders will be generated. Default: FALSE}
+
+\item{overview_label_prefix}{Prefix label for the differential abundance overview .pdf and interactive .html plots}
 
 \item{plot_pdf}{Whether to plot summary of the differential tests.}
 
