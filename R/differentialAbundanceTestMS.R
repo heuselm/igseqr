@@ -12,6 +12,9 @@
 #' @param write_preprocessing_results Whether the intermediate results of each pairwise comparison shall be written. Separate subfolders will be generated. Default: FALSE
 #' @param write_csv_protein Whether to write differential abundance testing result table summarized to protein level (csv). Default: TRUE
 #' @param write_csv_precursor Whether to write differential abundance testing result table containing precursor level information (csv). Default: FALSE
+#' @param imputation_percentile Percentile of non-0 quantitative values that the normal distribution for missing value imputation shall be centered on.
+#'  Default: 0.001. Check imputation_histogram.pdf output for parameter selection.
+#' @param imputation_rnorm_sd Standard deviation (~width) of the normal distribution for missing value imputation. Check imputation_histogram.pdf output for parameter selection.
 #' @param overview_label_prefix Prefix label for the differential abundance overview .pdf and interactive .html plots
 #' @param plot_pdf Whether to plot summary of the differential tests.
 #' @param plot_html If plotting summary, whether to also generate interactive summary of the differential tests.
@@ -31,19 +34,21 @@
 #' @export
 
 differentialAbundanceTestMS = function(DIA_resultset,
-                                         study_design_external = NULL,
-                                         comparison_matrix = matrix(c("AP_m11_tF", "AP_m11_t0",
+                                       study_design_external = NULL,
+                                       comparison_matrix = matrix(c("AP_m11_tF", "AP_m11_t0",
                                                                       "AP_m12_tF", "AP_m12_t0",
                                                                       "AP_m1_tF", "AP_m1_t0",
                                                                       "AP_m2_tF", "AP_m2_t0"),
                                                                     ncol = 2, byrow = TRUE),
-                                         write_preprocessing_results = TRUE,
-                                         write_diffTable_csv_protein = TRUE,
-                                         write_diffTable_csv_precursor = TRUE,
-                                         overview_label_prefix = "IGSeq_M1imm_APMS_batch1_t3t0",
-                                         plot_pdf = TRUE,
-                                         plot_html = TRUE,
-                                         prot_highlight_tag = "IGSeq"){
+                                      write_preprocessing_results = TRUE,
+                                      write_diffTable_csv_protein = TRUE,
+                                      write_diffTable_csv_precursor = TRUE,
+                                      imputation_percentile = 0.001,
+                                      imputation_rnorm_sd = 0.2,
+                                      overview_label_prefix = "IGSeq_M1imm_APMS_batch1_t3t0",
+                                      plot_pdf = TRUE,
+                                      plot_html = TRUE,
+                                      prot_highlight_tag = "IGSeq"){
 
   # Initialize table to collect Results across the differential tests
   cRes = data.table()
@@ -77,8 +82,8 @@ differentialAbundanceTestMS = function(DIA_resultset,
                                               # filtering (only global filtering implemented)
                                               min_n_obs = 4,
                                               # imputation of missing values
-                                              imp_percentile = 0.001,
-                                              imp_sd = 0.2,
+                                              imp_percentile = imputation_percentile,
+                                              imp_sd = imputation_rnorm_sd,
 
                                               # plots?
                                               plot_pdf = if(i==1){TRUE}else{FALSE},

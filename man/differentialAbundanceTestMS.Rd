@@ -12,6 +12,8 @@ differentialAbundanceTestMS(
   write_preprocessing_results = TRUE,
   write_diffTable_csv_protein = TRUE,
   write_diffTable_csv_precursor = TRUE,
+  imputation_percentile = 0.001,
+  imputation_rnorm_sd = 0.2,
   overview_label_prefix = "IGSeq_M1imm_APMS_batch1_t3t0",
   plot_pdf = TRUE,
   plot_html = TRUE,
@@ -30,6 +32,11 @@ For possible values, check unique(DIA_resultset$study_design$condition).
 The data will be subset to the conditions specified in the comparison matrix.}
 
 \item{write_preprocessing_results}{Whether the intermediate results of each pairwise comparison shall be written. Separate subfolders will be generated. Default: FALSE}
+
+\item{imputation_percentile}{Percentile of non-0 quantitative values that the normal distribution for missing value imputation shall be centered on.
+Default: 0.001. Check imputation_histogram.pdf output for parameter selection.}
+
+\item{imputation_rnorm_sd}{Standard deviation (~width) of the normal distribution for missing value imputation. Check imputation_histogram.pdf output for parameter selection.}
 
 \item{overview_label_prefix}{Prefix label for the differential abundance overview .pdf and interactive .html plots}
 
