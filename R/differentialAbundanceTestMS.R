@@ -111,7 +111,7 @@ differentialAbundanceTestMS = function(DIA_resultset,
   }
 
   if (plot_pdf){
-    diffOverview = DiffTestR::plotDifferentialAbundanceOverview(cRes,
+    diffOverview = plotDifferentialAbundanceOverview(cRes,
                                                                 label_prefix = overview_label_prefix,
                                                                 browsable_html = plot_html,
                                                                 protein_highlight_tag = prot_highlight_tag)
