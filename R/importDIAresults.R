@@ -7,8 +7,6 @@
 #' data_long - data.table of the report
 #' data_wide - data.table of Protein.Group+Precursor.Id over the Ms runs/R.FileName
 #' study_design - study design table of filename, condition, replicate
-#' overview - analysis overview from SN
-#' settings - settings file
 #' @import data.table
 #' @export
 
@@ -20,14 +18,6 @@ importDIAresults = function(report_location, study_design = NULL){
 
   # read full long format report
   data_long = fread(report_location)
-
-  # read additional metainfo of SN analysis, if available
-  overview = fread(paste0(path, "/AnalyisOverview.txt"))
-  if (length(list.files(path)[grep("ExperimentSetup", list.files(path))])>0){
-    settings = fread(paste0(path, "/", list.files(path)[grep("ExperimentSetup", list.files(path))]))
-  } else {
-    settings = "N/A"
-  }
 
   # extract study design if available
   if(is.null(study_design)){
@@ -50,9 +40,7 @@ importDIAresults = function(report_location, study_design = NULL){
   # Assemble result
   DIAresult = list("data_long" = data_long,
                    "data_wide" = data_wide,
-                   "study_design" = study_design,
-                   "overview" = overview,
-                   "settings" = settings)
+                   "study_design" = study_design)
 
   return(DIAresult)
 }
