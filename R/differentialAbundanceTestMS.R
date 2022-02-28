@@ -29,7 +29,7 @@
 #' $data_matrix_log2
 #' $data_matrix_log2_imp
 #'
-#' @import data.table ggplot2 DiffTestR
+#' @import data.table ggplot2
 #'
 #' @export
 
